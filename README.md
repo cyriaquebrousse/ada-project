@@ -5,7 +5,7 @@ stop to the whole rest of the country; and display the result in a meaningful wa
 
 ## Data Description
 The feeds are based on the official Swiss schedule that is being published in the HAFAS format.
-Data is converted to GTFS format (http://www.transitwiki.org/TransitWiki/index.php?title=General_Transit_Feed_Specification).
+Data is converted to [GTFS format](http://www.transitwiki.org/TransitWiki/index.php?title=General_Transit_Feed_Specification).
 The version of the feed offered here does not contain every bit of information present in the original data.
 However it has everything needed to find the complete set of valid connections between two destinations for a
 given date and time.
