@@ -9,11 +9,7 @@ def home(request):
 
 def view_stations(request):
   """List of stations in Switzerland"""
-  return HttpResponse("""
-    <h1>Dummy list of stations</h1>
-    <p>List of all train stations in Switzerland</p>
-    """
-  )
+  return render(request, 'map/stations.html')
 
 def view_isochrone(request, lat, lng, dep_time=1200):
   """Isochrone map from given coordinates of starting point, and set departure time"""
@@ -25,8 +21,4 @@ def view_isochrone(request, lat, lng, dep_time=1200):
   except:
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
-  return HttpResponse("""
-    <h1>Dummy isochrone map</h1>
-    <p>Map for coordinates ({0},{1}), with departure time set at {2}</p>
-    """.format(lat, lng, dep_time)
-  )
+  return render(request, 'map/isochrone.html', locals())
