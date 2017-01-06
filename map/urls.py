@@ -10,8 +10,8 @@ urlpatterns = [
 
   # isochrone map
   url(
-    r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)/(?P<dep_time>\d\d\d\d)$',
+    r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)/(?P<dep_time>\d\d\d\d)/?$',
     views.view_isochrone
   ),
-  url(r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)$', views.view_isochrone)
+  url(r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)/?$', views.view_isochrone)
 ]
