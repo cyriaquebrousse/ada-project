@@ -27,5 +27,5 @@ using the Swiss public transport network.
 
 ## Getting started
 First, install Django with `pip install django`. Make sure your PATH is in order.<br>
-Place yourself in the root of the repository, and execute `python manage.py startserver`.<br>
+Place yourself in the root of the repository, and execute `python manage.py runserver`.<br>
 You can then access [http://localhost:8000](http://localhost:8000).
