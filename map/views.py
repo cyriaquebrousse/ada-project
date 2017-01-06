@@ -21,5 +21,4 @@ def view_isochrone(request, lat, lng, dep_time='1200'):
   except:
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
-  #return render(request, 'map/isochrone.html', locals())
   return JsonResponse({'lat':lat, 'lng':lng, 'dep_time': '{0}{1}'.format(dep_time.hour, dep_time.minute)})
