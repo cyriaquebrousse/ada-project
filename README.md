@@ -1,4 +1,4 @@
-# Applied Data Analysis Project.
+# Applied Data Analysis Project
 
 Calculate time-to-destination using the Swiss pubic transport network, from any starting point
 stop to the whole rest of the country; and display the result in a meaningful way (isochone maps).
@@ -23,3 +23,9 @@ using the Swiss public transport network.
  - Build a graph with a bearable memory footprint (to be stored in memory).
  - Handle minimum shortest paths queries in a computational efficient way.
  - Visualize the results using a custom visualization tool (isochone maps).
+
+
+## Getting started
+First, install Django with `pip install django`. Make sure your PATH is in order.<br>
+Place yourself in the root of the repository, and execute `python manage.py startserver`.<br>
+You can then access [http://localhost:8000](http://localhost:8000).
