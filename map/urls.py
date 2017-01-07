@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
   # dummy home page
-  url(r'home$', views.home),
+  url(r'home$', views.view_map),
 
   # list of all stations
   url(r'stations$', views.view_stations),
