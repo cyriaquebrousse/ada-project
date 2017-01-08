@@ -2,8 +2,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-  # dummy home page
-  url(r'home$', views.home, name='map_home'),
+  # home page
+  url(r'(home)?/?$', views.view_map, name='map_home'),
 
   # list of all stations
   url(r'stations$', views.view_stations, name='map_stations'),

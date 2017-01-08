@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 def home(request):
   """dummy"""
   text = "Hello world!"
-  return HttpResponse(text)
+  return HttpResponse(text) 
 
 def view_stations(request):
   """List of stations in Switzerland"""
@@ -14,6 +14,9 @@ def view_stations(request):
     stations[s['id']] = s
   return JsonResponse({'stops':stations})
 
+
+def view_map(request) :
+  return render(request, 'map/index.html')
 
 def view_isochrone(request, lat, lng, dep_time='1200'):
   """Isochrone map from given coordinates of starting point, and set departure time"""
