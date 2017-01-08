@@ -6,7 +6,7 @@ urlpatterns = [
   url(r'home/?$', views.view_map, name='map_home'),
 
   # list of all stations
-  url(r'stations$', views.view_stations, name='map_stations'),
+  url(r'stations/?$', views.view_stations, name='map_stations'),
 
   # isochrone map
   url(
