@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render
 
 def home(request):
   """dummy"""
@@ -13,7 +14,6 @@ def view_stations(request):
   for s in Stop.objects.values():
     stations[s['id']] = s
   return JsonResponse({'stops':stations})
-
 
 def view_map(request) :
   return render(request, 'map/index.html')

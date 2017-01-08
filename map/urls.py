@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
   # home page
-  url(r'(home)?/?$', views.view_map, name='map_home'),
+  url(r'home/?$', views.view_map, name='map_home'),
 
   # list of all stations
   url(r'stations$', views.view_stations, name='map_stations'),
