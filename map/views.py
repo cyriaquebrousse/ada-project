@@ -2,18 +2,11 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 
-def home(request):
-  """dummy"""
-  text = "Hello world!"
-  return HttpResponse(text) 
-
 def view_stations(request):
   """List of stations in Switzerland"""
   from map.models import Stop
-  stations = {}
-  for s in Stop.objects.values():
-    stations[s['id']] = s
-  return JsonResponse({'stops':stations})
+  stations = [s for s in Stop.objects.values()]
+  return JsonResponse({'stops' : stations})
 
 def view_map(request) :
   return render(request, 'map/index.html')
@@ -28,4 +21,12 @@ def view_isochrone(request, lat, lng, dep_time='1200'):
   except:
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
-  return JsonResponse({'lat':lat, 'lng':lng, 'dep_time': '{0}{1}'.format(dep_time.hour, dep_time.minute)})
+  result = {
+    'closest_stop_id' : 8501120, # dummy
+    'lat' : lat, # deprecated
+    'lng' : lng, # deprecated
+    'dep_time' : '{0}{1}'.format(dep_time.hour, dep_time.minute), # deprecated
+
+  }
+
+  return JsonResponse(result)

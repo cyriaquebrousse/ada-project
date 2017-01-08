@@ -1,6 +1,6 @@
-
-$(document).ready(function(){/* google maps -----------------------------------------------------*/
-google.maps.event.addDomListener(window, 'load', initialize);
+$(document).ready(function() {
+  /* google maps -----------------------------------------------------*/
+  google.maps.event.addDomListener(window, 'load', initialize);
 
   function initialize() {
     var ISOCHRONE_URL = "/map/isochrone/";
@@ -79,7 +79,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
     function onMapLoaded() {
       var client = new JsonClient(STATIONS_URL);
       client.get('', function(response) {
-
+        response.stops.forEach(function(s) {
+          new google.maps.Marker({
+            position: new google.maps.LatLng(s.lat, s.lng),
+            map: map,
+            clickable: false,
+            title: s.name,
+            icon: '/static/map/icon/cross_black.png',
+          })
+        });
       });
     }
 
