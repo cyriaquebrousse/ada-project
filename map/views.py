@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
+from . import queries
 
 def view_stations(request):
   """List of stations in Switzerland"""
@@ -22,7 +23,7 @@ def view_isochrone(request, lat, lng, dep_time='1200'):
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
   result = {
-    'closest_stop_id' : 8501120, # dummy
+    'closest_stop' : queries.closest_stop(lat, lng),
     'lat' : lat, # deprecated
     'lng' : lng, # deprecated
     'dep_time' : '{0}{1}'.format(dep_time.hour, dep_time.minute), # deprecated
