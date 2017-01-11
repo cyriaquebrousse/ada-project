@@ -43,10 +43,15 @@ $(document).ready(function() {
       var latLng = event.latLng;
 
       checkCountryAndProceed(latLng, 'CH', function() {
-        var client = new JsonClient(CLOSEST_STOP_URL);
-
-        client.get(latLng.lat() + ',' + latLng.lng(), function(response) {
+        // first get the closest stop ID
+        new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
           activateStop(resolveStop(response.closest_stop.id));
+
+          // then query for the isochrone network
+          new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
+            console.log('isochrone from stop ' + active_stop + ':');
+            console.log(response.reachable_stops);
+          });
         });
       });
 
@@ -123,6 +128,7 @@ $(document).ready(function() {
       active_stop = stop;
       active_stop.active = true;
       active_stop.marker.setIcon(map_constants.stop_icon_active);
+      console.log('> activated stop: ' + active_stop.name);
     }
   }
 

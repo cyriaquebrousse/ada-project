@@ -86,8 +86,17 @@ function JsonClient(baseUrl) {
 *   the time in format HHMM, including zeros
 */
 function formatTime(hours, minutes) {
-  sHours = hours < 10 ? '0' + hours : '' + hours;
-  sMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
+  var sHours = hours < 10 ? '0' + hours : '' + hours;
+  var sMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
 
   return sHours + sMinutes;
+}
+
+/**
+* Returns:
+*   the time it is now, according to the specification for #formatTime(hours, minutes)
+*/
+function formatTimeNow() {
+  var now = new Date();
+  return formatTime(now.getHours(), now.getMinutes());
 }

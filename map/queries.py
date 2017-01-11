@@ -29,7 +29,7 @@ def compute_shortest_paths(dep_stop_id, dep_time_seconds):
     
     import pickle
 
-    with open('trains_graph.pickle', 'rb') as f:
+    with open('data/trains_graph.pickle', 'rb') as f:
         # TODO: Load the graph once
         G = pickle.load(f)
         
