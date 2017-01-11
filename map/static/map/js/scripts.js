@@ -6,8 +6,9 @@ $(document).ready(function() {
 
   function initialize() {
     // URL constants
-    var ISOCHRONE_URL = "/map/isochrone/";
-    var STATIONS_URL = "/map/stations/";
+    var ISOCHRONE_URL = '/map/isochrone/';
+    var STATIONS_URL = '/map/stations/';
+    var CLOSEST_STOP_URL = '/map/closest-stop/';
 
     // all stops, with their marker
     var stops = {};
@@ -42,27 +43,12 @@ $(document).ready(function() {
       var latLng = event.latLng;
 
       checkCountryAndProceed(latLng, 'CH', function() {
-        var client = new JsonClient(ISOCHRONE_URL);
-        var now = new Date();
-        var time = formatTime(now.getHours(), now.getMinutes());
-        client.get(latLng.lat() + ',' + latLng.lng() + '/' + time, function(response) {
+        var client = new JsonClient(CLOSEST_STOP_URL);
+
+        client.get(latLng.lat() + ',' + latLng.lng(), function(response) {
           activateStop(resolveStop(response.closest_stop.id));
         });
       });
-
-      /**
-      * Parameters:
-      *   hours, minutes: integers
-      *
-      * Returns:
-      *   the time in format HHMM, including zeros
-      */
-      function formatTime(hours, minutes) {
-        sHours = hours < 10 ? '0' + hours : '' + hours;
-        sMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
-
-        return sHours + sMinutes;
-      }
 
       /**
       * Parameters:

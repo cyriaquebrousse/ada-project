@@ -78,4 +78,16 @@ function JsonClient(baseUrl) {
 /* **************************************
                 FUNCTIONS
 **************************************** */
+/**
+* Parameters:
+*   hours, minutes: integers
+*
+* Returns:
+*   the time in format HHMM, including zeros
+*/
+function formatTime(hours, minutes) {
+  sHours = hours < 10 ? '0' + hours : '' + hours;
+  sMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
 
+  return sHours + sMinutes;
+}
