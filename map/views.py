@@ -14,6 +14,9 @@ def view_stations(request):
 
 def view_closest_stop(request, lat, lng):
   """Closest public transport stop to the given coordintes"""
+  lat = float(lat)
+  lng = float(lng)
+
   result = {
     'closest_stop' : queries.closest_stop(lat, lng),
   }

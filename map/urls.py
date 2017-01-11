@@ -15,9 +15,9 @@ urlpatterns = [
 
   # isochrone network
   url(
-    r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)/(?P<dep_time>\d\d\d\d)/?$',
+    r'isochrone/(?P<dep_stop_id>[0-9]+)/(?P<dep_time>\d\d\d\d)/?$',
     views.view_isochrone,
     name='map_isochrone'
   ),
-  url(r'isochrone/(?P<lat>[-+]?[0-9]*\.?[0-9]+),(?P<lng>[-+]?[0-9]*\.?[0-9]+)/?$', views.view_isochrone)
+  url(r'isochrone/(?P<dep_stop_id>[0-9]+)/?$', views.view_isochrone)
 ]
