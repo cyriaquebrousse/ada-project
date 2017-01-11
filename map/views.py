@@ -18,26 +18,20 @@ def view_closest_stop(request, lat, lng):
   lng = float(lng)
 
   result = {
-    'closest_stop' : queries.closest_stop(lat, lng),
+    'closest_stop' : queries.find_closest_stop(lat, lng),
   }
   return JsonResponse(result)
 
-def view_isochrone(request, lat, lng, dep_time='1200'):
+def view_isochrone(request, dep_stop_id, dep_time='1200'):
   """Isochrone map from given coordinates of starting point, and set departure time"""
-  lat = float(lat)
-  lng = float(lng)
   from datetime import datetime, time
   try:
     dep_time = datetime.strptime(dep_time, '%H%M').time()
+    dep_time_seconds = dep_time.hour * 60 * 60 + dep_time.minute * 60 + dep_time.second 
   except:
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
   result = {
-    'closest_stop' : queries.closest_stop(lat, lng),
-    'lat' : lat, # deprecated
-    'lng' : lng, # deprecated
-    'dep_time' : '{0}{1}'.format(dep_time.hour, dep_time.minute), # deprecated
-
+    'reachable_stops': queries.compute_shortest_paths(dep_stop_id, dep_time_seconds)
   }
-
   return JsonResponse(result)
