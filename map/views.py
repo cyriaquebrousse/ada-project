@@ -3,14 +3,21 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render
 from . import queries
 
+def view_map(request) :
+  return render(request, 'map/index.html')
+
 def view_stations(request):
   """List of stations in Switzerland"""
   from map.models import Stop
   stations = [s for s in Stop.objects.values()]
   return JsonResponse({'stops' : stations})
 
-def view_map(request) :
-  return render(request, 'map/index.html')
+def view_closest_stop(request, lat, lng):
+  """Closest public transport stop to the given coordintes"""
+  result = {
+    'closest_stop' : queries.closest_stop(lat, lng),
+  }
+  return JsonResponse(result)
 
 def view_isochrone(request, lat, lng, dep_time='1200'):
   """Isochrone map from given coordinates of starting point, and set departure time"""
