@@ -18,8 +18,8 @@ class TransitGraph:
         V, stop_id2index, index2stop_id = 0, dict(), dict()
         for stop in sched.stops:    
             V += 1
-            stop_id2index[stop.stop_id] = V
-            index2stop_id[V] = stop.stop_id
+            stop_id2index[self.clean_id(stop.stop_id)] = V
+            index2stop_id[V] = self.clean_id(stop.stop_id)
         
         adj = [[] for i in range(V+1)]
 
@@ -30,11 +30,14 @@ class TransitGraph:
                 departure_from_u = cur.departure_time.total_seconds()
                 arrival_to_v = nxt.arrival_time.total_seconds()
                 
-                u = stop_id2index[cur.stop_id]
-                v = stop_id2index[nxt.stop_id]
+                u = stop_id2index[self.clean_id(cur.stop_id)]
+                v = stop_id2index[self.clean_id(nxt.stop_id)]
                 adj[u].append((v, departure_from_u, arrival_to_v))
                 
         return V, adj, stop_id2index, index2stop_id
+    
+    def clean_id(self, id):
+        return id.split(":")[0]
 
     def dijkstra(self, src, departing_time):
         """
@@ -45,13 +48,13 @@ class TransitGraph:
             adj            : Adjacency matrix with edges of the form (v, departure_time, arrival_time).
             src            : Departing node.
             departing_time : Departing time (delta in seconds).
-    vertex
+
         Returns:
             dist   : Shortest paths (10^9 = no path).
             parent : Previous node in the shortest path tree (0 = no previous node).
         """
         
-        Q, dist, parent = [(departing_time, src)], [10**9]*(self.V+1), [-1]*(self.V+1)
+        Q, dist, parent = [(departing_time, src)], [10**9]*(self.V+1), [0]*(self.V+1)
         visited = parent[:]
         dist[src] = departing_time
         
