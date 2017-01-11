@@ -10,7 +10,10 @@ $(document).ready(function() {
     var STATIONS_URL = '/map/stations/';
     var CLOSEST_STOP_URL = '/map/closest-stop/';
 
-    // all stops, with their marker
+    // flag for map initial loading
+    var MAP_LOADED_ONCE = false;
+
+    // all stops, with their bubble
     var stops = {};
     var active_stop = null;
 
@@ -26,11 +29,17 @@ $(document).ready(function() {
     * Callback for when map is loaded
     */
     function onMapLoaded() {
+      if (MAP_LOADED_ONCE) {
+        // the map is already instantiated, no need for repainting all bubbles
+        return;
+      }
+
       var client = new JsonClient(STATIONS_URL);
       client.get('', function(response) {
         stops = response.stops;
-        createMarkerForStops();
+        createBubbles();
       });
+      MAP_LOADED_ONCE = true;
     }
 
     /**
@@ -42,44 +51,15 @@ $(document).ready(function() {
       // get coordinates from the click
       var latLng = event.latLng;
 
-      checkCountryAndProceed(latLng, 'CH', function() {
-        // first get the closest stop ID
-        new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
-          activateStop(resolveStop(response.closest_stop.id));
+      // first get the closest stop ID
+      new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
+        activateStop(resolveStop(response.closest_stop.id));
 
-          // then query for the isochrone network
-          new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
-            console.log('isochrone from stop ' + active_stop + ':');
-            console.log(response.reachable_stops);
-          });
+        // then query for the isochrone network
+        new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
+          paintIsochroneBubbles(response.reachable_stops);
         });
       });
-
-      /**
-      * Parameters:
-      *   latLng the lat/lng coordinates to check
-      *   code code for the country to check against
-      *   action function to execute if latlng and code matchs
-      */
-      function checkCountryAndProceed(latLng, code, action) {
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({'latLng': latLng}, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-            if (results[1]) {
-              // get the required address & check
-              addrComponents = results[1].address_components;
-              for (var i = 0; i < addrComponents.length; i++) {
-                if (addrComponents[i].types[0] == "country"
-                 && addrComponents[i].short_name == code) {
-                  action();
-                  break;
-                }
-              }
-            }
-          }
-        });
-      }
-
     }
 
     /**
@@ -97,19 +77,34 @@ $(document).ready(function() {
     }
 
     /**
-    * Creates a marker and its associated properties for each stop.
-    * Each marker is registered in its corresponding Stop object.
+    * Creates a bubble and its associated properties for each stop.
+    * Each bubble is registered in its corresponding Stop object.
     */
-    function createMarkerForStops() {
+    function createBubbles() {
       stops.forEach(function(s) {
         s['active'] = false;
-        s['marker'] = new google.maps.Marker({
-          position: new google.maps.LatLng(s.lat, s.lng),
+        s['bubble'] = new google.maps.Circle({
+          center: new google.maps.LatLng(s.lat, s.lng),
           map: map,
-          clickable: false,
-          title: s.name,
-          icon: map_constants.stop_icon_default,
         });
+        bubble_set_default(s.bubble);
+      });
+    }
+
+    function paintIsochroneBubbles(reachable_stops) {
+      stops.forEach(function(s) {
+        // reset every stop except the active one
+        if (s.id != active_stop.id) {
+          bubble_set_default(s.bubble);
+        }
+      });
+
+      // paint every reachable stop from the active one
+      reachable_stops.forEach(function(rs) {
+        s = resolveStop(rs.stop_id);
+        if (s != null && s.id != active_stop.id) {
+          bubble_set_reachable(s.bubble, 'red', 'red');
+        }
       });
     }
 
@@ -122,12 +117,12 @@ $(document).ready(function() {
     function activateStop(stop) {
       if (active_stop != null) {
         active_stop.active = false;
-        active_stop.marker.setIcon(map_constants.stop_icon_default);
+        bubble_set_default(active_stop.bubble);
       }
 
       active_stop = stop;
       active_stop.active = true;
-      active_stop.marker.setIcon(map_constants.stop_icon_active);
+      bubble_set_active(active_stop.bubble);
       console.log('> activated stop: ' + active_stop.name);
     }
   }
