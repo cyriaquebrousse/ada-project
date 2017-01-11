@@ -1,10 +1,7 @@
 from .models import Stop
+from .graph import TransitGraph
 from geopy.distance import vincenty
 import numpy as np
-
-import pygtfs
-
-from .graph import TransitGraph
 
 def find_closest_stop(lat, lng):
   """
@@ -50,8 +47,8 @@ def compute_shortest_paths(dep_stop_id, dep_time_seconds):
 
     return [
       {
-        'stop_id'      : G.index2stop_id[i],
+        'stop_id'      : int(G.index2stop_id[i]),
         'time_arrival' : dist[i],
-        'prev_stop_id' : G.index2stop_id[parent[i]] if parent[i] > 0 else -1
+        'prev_stop_id' : int(G.index2stop_id[parent[i]]) if parent[i] > 0 else -1
       } for i in range(len(dist)) if dist[i] < MAX_TIME
     ]
