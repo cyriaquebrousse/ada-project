@@ -15,7 +15,7 @@ def view_stations(request):
 def view_closest_stop(request, lat, lng):
   """Closest public transport stop to the given coordintes"""
   result = {
-    'closest_stop' : queries.closest_stop(lat, lng),
+    'closest_stop' : queries.find_closest_stop(lat, lng),
   }
   return JsonResponse(result)
 
@@ -24,10 +24,11 @@ def view_isochrone(request, dep_stop_id, dep_time='1200'):
   from datetime import datetime, time
   try:
     dep_time = datetime.strptime(dep_time, '%H%M').time()
-    # total_seconds()
-    dep_time = dep_time.hour * 60 * 60 + dep_time.minute * 60 + dep_time.second 
+    dep_time_seconds = dep_time.hour * 60 * 60 + dep_time.minute * 60 + dep_time.second 
   except:
     return HttpResponseBadRequest('400: Departure time could not be cast to time')
 
-  result = shortest_paths(dep_stop_id, dep_time)
+  result = {
+    'reachable_stops': queries.compute_shortest_paths(dep_stop_id, dep_time_seconds)
+  }
   return JsonResponse(result)
