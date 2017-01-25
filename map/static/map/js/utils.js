@@ -169,6 +169,34 @@ function formatTimeNow() {
   return formatTime(now.getHours(), now.getMinutes());
 }
 
+
+/**
+* Parameters:
+*   curr_radius the current radius of the bubble, in meters
+*   old_zoom the previous zoom level, integer
+*   new_zoom the new zoom level, integer
+*
+* Returns:
+*   the new radius of the bubble for the new zoom level, in meters
+*/
+function bubble_radius_for_new_zoom(curr_radius, old_zoom, new_zoom) {
+  var delta_zoom = new_zoom - old_zoom;
+  return curr_radius / Math.pow(2, delta_zoom);
+}
+
+/**
+* Parameters:
+*   radius the radius corresponding to the default zoom level, in meters
+*   zoom the current zoom level
+*
+* Returns:
+*   the new radius of the bubble, in meters
+*/
+function bubble_radius_for_zoom(radius, zoom) {
+  var delta_zoom = zoom - map_constants.options.zoom;
+  return radius / Math.pow(2, delta_zoom);
+}
+
 /**
 * Parameters:
 *   latLng the lat/lng coordinates to check
@@ -194,35 +222,35 @@ function checkCountryAndProceed(latLng, code, action) {
   });
 }
 
-function bubble_set_default(bubble) {
+function bubble_set_default(bubble, zoom) {
   bubble.setOptions({
     strokeColor: bubbles.default_stroke_color,
     strokeOpacity: bubbles.default_stroke_opacity,
     strokeWeight: bubbles.default_stroke_weight,
     fillColor: bubbles.default_fill_color,
     fillOpacity: bubbles.default_fill_opacity,
-    radius: bubbles.default_radius,
+    radius: bubble_radius_for_zoom(bubbles.default_radius, zoom),
   });
 }
 
-function bubble_set_active(bubble) {
+function bubble_set_active(bubble, zoom) {
   bubble.setOptions({
     strokeColor: bubbles.active_stroke_color,
     strokeOpacity: bubbles.active_stroke_opacity,
     strokeWeight: bubbles.active_stroke_weight,
     fillColor: bubbles.active_fill_color,
     fillOpacity: bubbles.active_fill_opacity,
-    radius: bubbles.active_radius,
+    radius: bubble_radius_for_zoom(bubbles.active_radius, zoom),
   });
 }
 
-function bubble_set_reachable(bubble, strokeColor, fillColor) {
+function bubble_set_reachable(bubble, strokeColor, fillColor, zoom) {
   bubble.setOptions({
     strokeColor: strokeColor,
     strokeOpacity: bubbles.reachable_stroke_opacity,
     strokeWeight: bubbles.reachable_stroke_weight,
     fillColor: fillColor,
     fillOpacity: bubbles.reachable_fill_opacity,
-    radius: bubbles.reachable_radius,
+    radius: bubble_radius_for_zoom(bubbles.reachable_radius, zoom),
   });
 }
