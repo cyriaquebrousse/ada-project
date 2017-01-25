@@ -53,8 +53,6 @@ var map_constants = {
     maxZoom: 15,
   },
 
-  'stop_icon_default' : '/static/map/icon/cross_black.png',
-  'stop_icon_active'  : '',
 };
 
 // styles for the bubbles

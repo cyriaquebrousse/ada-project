@@ -15,6 +15,7 @@ $(document).ready(function() {
 
     // all stops, with their bubble
     var stops = {};
+    var stop_id_to_stops = {}
     var active_stop = null;
 
     // map object
@@ -37,6 +38,7 @@ $(document).ready(function() {
       var client = new JsonClient(STATIONS_URL);
       client.get('', function(response) {
         stops = response.stops;
+        resolveStops(stops);
         createBubbles();
       });
       MAP_LOADED_ONCE = true;
@@ -53,7 +55,7 @@ $(document).ready(function() {
 
       // first get the closest stop ID
       new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
-        activateStop(resolveStop(response.closest_stop.id));
+        activateStop(stop_id_to_stops[response.closest_stop.id]);
 
         // then query for the isochrone network
         new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
@@ -63,17 +65,12 @@ $(document).ready(function() {
     }
 
     /**
-    * Parameters:
-    *   stop_id id of the Stop object we want to retrieve
+    * Resolves the stop objects into their ids. Puts the ids in a dictionary.
     */
-    function resolveStop(stop_id) {
-      var res = null;
-      stops.forEach(function(s) {
-        if (s.id == stop_id) {
-          res = s;
-        }
+    function resolveStops(stop_list) {
+      stop_list.forEach(function(s) {
+        stop_id_to_stops[s.id] = s
       });
-      return res;
     }
 
     /**
@@ -101,8 +98,9 @@ $(document).ready(function() {
 
       // paint every reachable stop from the active one
       reachable_stops.forEach(function(rs) {
-        s = resolveStop(rs.stop_id);
-        if (s != null && s.id != active_stop.id) {
+        // TODO
+        if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
+          s = stop_id_to_stops[rs.stop_id];
           bubble_set_reachable(s.bubble, 'red', 'red');
         }
       });
