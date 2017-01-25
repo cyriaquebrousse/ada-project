@@ -12,25 +12,31 @@ $(document).ready(function() {
 
     // all stops, with their marker
     var stops = {};
+    var stop_ids = {};
+    var stop_latlngs = {};
+
     var active_stop = null;
+    var graph = [];
 
     // map object
     var map = new google.maps.Map(document.getElementById("map-canvas"), map_constants.options);
     map.set('styles', map_constants.styles);
 
-    // register the listeners on the map
-    google.maps.event.addListener(map, 'tilesloaded', onMapLoaded);
-    google.maps.event.addListener(map, 'click', onMapClick);
+   
+    var client = new JsonClient(STATIONS_URL);
+    client.get('', function(response) {
+    	stops = response.stops;
+      resolveStop(stops);
 
+      // register the listeners on the map
+    	google.maps.event.addListener(map, 'tilesloaded', onMapLoaded);
+    	google.maps.event.addListener(map, 'click', onMapClick);
+    })
     /**
     * Callback for when map is loaded
     */
-    function onMapLoaded() {
-      var client = new JsonClient(STATIONS_URL);
-      client.get('', function(response) {
-        stops = response.stops;
+    function onMapLoaded() {     
         createMarkerForStops();
-      });
     }
 
     /**
@@ -41,19 +47,31 @@ $(document).ready(function() {
     function onMapClick(event) {
       // get coordinates from the click
       var latLng = event.latLng;
-
       checkCountryAndProceed(latLng, 'CH', function() {
         // first get the closest stop ID
         new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
-          activateStop(resolveStop(response.closest_stop.id));
+          activateStop(stop_ids[response.closest_stop.id]);
 
           // then query for the isochrone network
           new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
-            console.log('isochrone from stop ' + active_stop + ':');
-            console.log(response.reachable_stops);
+            draw_reachable_stops(response.reachable_stops);
           });
         });
       });
+
+      function draw_reachable_stops(reachable_stops) {
+      	//console.log(reachable_stops)
+      	//console.log(stop_ids)
+      	cleanGraph();
+      	reachable_stops.forEach( 	function(node) {
+      		if(node.stop_id in stop_ids) {
+	      		var stop = stop_ids[node.stop_id];
+	      		var marker = stop.bubble;
+	      		marker.setMap(map);
+	      		graph.push(stop);
+        	}
+      	});
+   		}
 
       /**
       * Parameters:
@@ -79,21 +97,25 @@ $(document).ready(function() {
           }
         });
       }
+    }
 
+    function cleanGraph() {
+    	graph.forEach(function(stop) {
+    		stop.bubble.setMap(null);
+    	});
     }
 
     /**
     * Parameters:
     *   stop_id id of the Stop object we want to retrieve
     */
-    function resolveStop(stop_id) {
-      var res = null;
-      stops.forEach(function(s) {
-        if (s.id == stop_id) {
-          res = s;
-        }
+    function resolveStop(listStops) {
+      listStops.forEach(function(s) {
+        var latlng = new google.maps.LatLng(s.lat, s.lng)
+        //console.log(s.id)
+        stop_ids[s.id] = s
+        stop_latlngs[latlng] = s
       });
-      return res;
     }
 
     /**
@@ -110,6 +132,15 @@ $(document).ready(function() {
           title: s.name,
           icon: map_constants.stop_icon_default,
         });
+        s['bubble'] = new google.maps.Circle({  
+        	center: new google.maps.LatLng(s.lat, s.lng),  
+        	fillColor:map_constants.bubble.fill.color,  
+	        fillOpacity:map_constants.bubble.fill.opacity,  
+        	strokeColour:map_constants.bubble.stroke.color,  
+        	strokeWeight:map_constants.bubble.stroke.weight,  
+        	strokeOpacity:map_constants.bubble.stroke.opacity,  
+	        radius:1000
+      	});
       });
     }
 
@@ -122,13 +153,14 @@ $(document).ready(function() {
     function activateStop(stop) {
       if (active_stop != null) {
         active_stop.active = false;
-        active_stop.marker.setIcon(map_constants.stop_icon_default);
+        active_stop.marker.setMap(null);
       }
 
       active_stop = stop;
+      console.log(stop);
       active_stop.active = true;
       active_stop.marker.setIcon(map_constants.stop_icon_active);
-      console.log('> activated stop: ' + active_stop.name);
+      console.log('> activated stop: ' + active_stop);
     }
   }
 

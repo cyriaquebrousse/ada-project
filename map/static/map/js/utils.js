@@ -53,9 +53,23 @@ var map_constants = {
     maxZoom: 15,
   },
 
+  'bubble' : {
+    'fill' : {
+      color : "#709ED9",
+      opacity : 0.6},  
+    'stroke' : {
+       color:"#709ED9",
+       weight:1,
+       opacity:0.3
+      }  
+    },
+
   'stop_icon_default' : '/static/map/icon/cross_black.png',
-  'stop_icon_active'  : '',
+  'stop_icon_active'  : ''
+ 
 };
+
+
 
 /* **************************************
                 OBJECTS
@@ -97,6 +111,6 @@ function formatTime(hours, minutes) {
 *   the time it is now, according to the specification for #formatTime(hours, minutes)
 */
 function formatTimeNow() {
-  var now = new Date();
+  var now = new Date("January 02, 2017 12:15:00");
   return formatTime(now.getHours(), now.getMinutes());
 }
