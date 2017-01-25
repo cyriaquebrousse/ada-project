@@ -13,6 +13,10 @@ $(document).ready(function() {
     // flag for map initial loading
     var MAP_LOADED_ONCE = false;
 
+    //time range
+    var end_time = 10 * 60 * 60;
+    var start_time = 10 * 60;
+
     // all stops, with their bubble
     var stops = {};
     var stop_id_to_stops = {}
@@ -88,6 +92,20 @@ $(document).ready(function() {
       });
     }
 
+    function getGradientColor(value) {
+      //value from 0 to 1
+      var v = Math.min(1, (value) / end_time );
+      var hue=(( v )*120).toString(10);
+      return ["hsl(",hue,",100%,50%)"].join("");
+    }
+
+    function getColor(value){
+      var v = Math.min((value) / end_time, 1);
+      var index = Math.round(red_mix_color.red_blue.length * (1-v)) - 1;
+      console.log(red_mix_color.red_blue[index])
+      return red_mix_color.red_blue[index];
+    }
+
     function paintIsochroneBubbles(reachable_stops) {
       stops.forEach(function(s) {
         // reset every stop except the active one
@@ -101,7 +119,8 @@ $(document).ready(function() {
         // TODO
         if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
           s = stop_id_to_stops[rs.stop_id];
-          bubble_set_reachable(s.bubble, 'red', 'red');
+          var color = getGradientColor(rs.time_arrival);
+          bubble_set_reachable(s.bubble, color, color);
         }
       });
     }
@@ -123,6 +142,7 @@ $(document).ready(function() {
       bubble_set_active(active_stop.bubble);
       console.log('> activated stop: ' + active_stop.name);
     }
+
   }
 
 });
