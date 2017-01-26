@@ -21,6 +21,10 @@ $(document).ready(function() {
     var stops = {};
     var stop_id_to_stops = {}
     var active_stop = null;
+    var id_to_reachable_stops = {};
+
+    //path
+    var flightPath = new google.maps.Polyline(lines);
 
     // map object
     var map = new google.maps.Map(document.getElementById("map-canvas"), map_constants.options);
@@ -68,7 +72,11 @@ $(document).ready(function() {
 
         // then query for the isochrone network
         new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
-          paintIsochroneBubbles(response.reachable_stops);
+          id_to_reachable_stops = {};
+          var reachable_stops = response.reachable_stops;
+
+          resolveRechableStops(reachable_stops);
+          paintIsochroneBubbles(reachable_stops);
         });
       });
     }
@@ -86,6 +94,12 @@ $(document).ready(function() {
       });
     }
 
+    function resolveRechableStops(stop_list) {
+      stop_list.forEach(function(s) {
+        id_to_reachable_stops[s.stop_id] = s; 
+      })
+    }
+
     /**
     * Resolves the stop objects into their ids. Puts the ids in a dictionary.
     */
@@ -101,27 +115,52 @@ $(document).ready(function() {
     */
     function createBubbles() {
       stops.forEach(function(s) {
-        s['active'] = false;
+        s['active'] = false;        
         s['bubble'] = new google.maps.Circle({
           center: new google.maps.LatLng(s.lat, s.lng),
           map: map,
-        });
+        });;
         bubble_set_default(s.bubble, zoom);
+
+        s.bubble.addListener('mouseover', function(){
+          if(s.id in id_to_reachable_stops) {
+            var l = s.bubble.center;
+            draw_path(id_to_reachable_stops[s.id])
+          }
+        });
+        s.bubble.addListener('mouseout', function() {
+          flightPath.setMap(null);
+        })
       });
+      
+    }
+
+    function draw_path(edge) {
+      path_coordinates = [];
+      var current_edge = edge;
+      while(current_edge.stop_id != active_stop.id) {
+        var stop = stop_id_to_stops[current_edge.stop_id];
+        path_coordinates.push({lat: stop.lat, lng: stop.lng});
+        current_edge = id_to_reachable_stops[current_edge.prev_stop_id];
+      }
+
+      flightPath.setOptions({
+        path: path_coordinates
+      });
+      flightPath.setMap(map);
     }
 
     function getGradientColor(value) {
       //value from 0 to 1
       var v = Math.min(1, (value) / end_time );
       var hue=(( v )*120).toString(10);
-      return ["hsl(",hue,",100%,50%)"].join("");
+      return ["hsl(",hue,",100%,30%)"].join("");
     }
 
     function getColor(value){
       var v = Math.min((value) / end_time, 1);
-      var index = Math.round(red_mix_color.red_blue.length * (1-v)) - 1;
-      console.log(red_mix_color.red_blue[index])
-      return red_mix_color.red_blue[index];
+      var index = Math.round(red_mix_color.red_yellow.length * (1-v)) - 1;
+      return red_mix_color.red_yellow[index];
     }
 
     function paintIsochroneBubbles(reachable_stops) {
@@ -138,6 +177,7 @@ $(document).ready(function() {
         if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
           s = stop_id_to_stops[rs.stop_id];
           var color = getGradientColor(rs.time_arrival);
+          //var color = getColor(rs.time_arrival);
           bubble_set_reachable(s.bubble, color, color, zoom);
         }
       });
@@ -160,7 +200,6 @@ $(document).ready(function() {
       bubble_set_active(active_stop.bubble, zoom);
       console.log('> activated stop: ' + active_stop.name);
     }
-
   }
 
 });

@@ -77,6 +77,13 @@ var bubbles = {
   reachable_radius: 2000,
 }
 
+var lines = {
+  geodesic: true,
+  strokeColor: 'black',
+  strokeOpacity: 1.0,
+  strokeWeight: 2,
+}
+
 var red_mix_color = {
   'red_yellow' : [
     '#990000',
@@ -252,5 +259,16 @@ function bubble_set_reachable(bubble, strokeColor, fillColor, zoom) {
     fillColor: fillColor,
     fillOpacity: bubbles.reachable_fill_opacity,
     radius: bubble_radius_for_zoom(bubbles.reachable_radius, zoom),
+  });
+}
+
+function bubble_set_path(bubble) {
+  bubble.setOptions({
+    strokeColor: 'black',
+    strokeOpacity: bubbles.active_stroke_opacity,
+    strokeWeight: bubbles.active_stroke_opacity,
+    fillColor: 'white',
+    fillOpacity: bubbles.active_fill_opacity,
+    radius: bubble_radius_for_zoom(bubbles.reachable_radius, zoom) * 2,
   });
 }
