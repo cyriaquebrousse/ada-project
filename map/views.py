@@ -22,7 +22,7 @@ def view_closest_stop(request, lat, lng):
   }
   return JsonResponse(result)
 
-def view_isochrone(request, dep_stop_id, dep_time='1200'):
+def view_isochrone(request, dep_stop_id, dep_time='0800'):
   """Isochrone map from given coordinates of starting point, and set departure time"""
   from datetime import datetime, time
   try:

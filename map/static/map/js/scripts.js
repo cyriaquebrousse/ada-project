@@ -5,6 +5,9 @@ $(document).ready(function() {
   });
 
   function initialize() {
+    /* **************************************
+                   CONSTANTS
+    **************************************** */
     // URL constants
     var ISOCHRONE_URL = '/map/isochrone/';
     var STATIONS_URL = '/map/stations/';
@@ -13,9 +16,9 @@ $(document).ready(function() {
     // flag for map initial loading
     var MAP_LOADED_ONCE = false;
 
-    //time range
-    var end_time = 10 * 60 * 60;
-    var start_time = 10 * 60;
+    // time range
+    var START_TIME = 10 * 60;
+    var END_TIME = 10 * 60 * 60;
 
     // all stops, with their bubble
     var stops = {};
@@ -33,11 +36,24 @@ $(document).ready(function() {
     // zoom level of the map
     var zoom = map_constants.options.zoom;
 
+    // departure time
+    var dep_time = map_constants.default_dep_time;
+
+    /* **************************************
+                    INIT TASKS
+    **************************************** */
     // register the listeners on the map
     google.maps.event.addListener(map, 'tilesloaded', onMapLoaded);
     google.maps.event.addListener(map, 'click', onMapClick);
     google.maps.event.addListener(map, 'zoom_changed', onZoomChanged);
 
+    // register change listener on dep_time selector
+    document.getElementById('deptime_select').addEventListener('change', onDepTimeChanged);
+    document.getElementById('deptime_select').value = map_constants.default_dep_time_js;
+
+     /* **************************************
+                    FUNCTIONS
+      **************************************** */
     /**
     * Callback for when map is loaded
     */
@@ -71,13 +87,7 @@ $(document).ready(function() {
         activateStop(stop_id_to_stops[response.closest_stop.id]);
 
         // then query for the isochrone network
-        new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + formatTimeNow(), function(response) {
-          id_to_reachable_stops = {};
-          var reachable_stops = response.reachable_stops;
-
-          resolveRechableStops(reachable_stops);
-          paintIsochroneBubbles(reachable_stops);
-        });
+        fireIsochroneQuery();
       });
     }
 
@@ -94,10 +104,32 @@ $(document).ready(function() {
       });
     }
 
-    function resolveRechableStops(stop_list) {
-      stop_list.forEach(function(s) {
-        id_to_reachable_stops[s.stop_id] = s; 
-      })
+    /*
+    * Callback for when the user changed the departure time in the control panel
+    */
+    function onDepTimeChanged() {
+      var new_deptime = document.getElementById('deptime_select').value;
+      dep_time = formatTime(new_deptime, 0);
+      console.log('departure time changed to '+ dep_time);
+
+      if (active_stop != null && active_stop.id > 0) {
+        fireIsochroneQuery();
+      }
+    }
+
+    /*
+    * Triggers the query for the isochrone network.
+    * When calling, make sure a stop is active by checking:
+    *   active_stop != null && active_stop.id > 0
+    */
+    function fireIsochroneQuery() {
+      new JsonClient(ISOCHRONE_URL).get(active_stop.id + '/' + dep_time, function(response) {
+        id_to_reachable_stops = {};
+        var reachable_stops = response.reachable_stops;
+
+        resolveRechableStops(response.reachable_stops);
+        paintIsochroneBubbles(response.reachable_stops);
+      });
     }
 
     /**
@@ -105,8 +137,17 @@ $(document).ready(function() {
     */
     function resolveStops(stop_list) {
       stop_list.forEach(function(s) {
-        stop_id_to_stops[s.id] = s
+        stop_id_to_stops[s.id] = s;
       });
+    }
+
+    /**
+    * Resolves the rechable stops (edge) objects into their ids. Puts the ids in a dictionary.
+    */
+    function resolveRechableStops(stop_list) {
+      stop_list.forEach(function(s) {
+        id_to_reachable_stops[s.stop_id] = s; 
+      })
     }
 
     /**
@@ -144,6 +185,8 @@ $(document).ready(function() {
         current_edge = id_to_reachable_stops[current_edge.prev_stop_id];
       }
 
+      path_coordinates.push({lat: active_stop.lat, lng: active_stop.lng})
+
       flightPath.setOptions({
         path: path_coordinates
       });
@@ -152,9 +195,9 @@ $(document).ready(function() {
 
     function getGradientColor(value) {
       //value from 0 to 1
-      var v = Math.min(1, (value) / end_time );
+      var v = Math.min(1, (value) / END_TIME );
       var hue=(( v )*120).toString(10);
-      return ["hsl(",hue,",100%,30%)"].join("");
+      return ["hsl(",hue,",100%, 50%)"].join("");
     }
 
     function getColor(value){

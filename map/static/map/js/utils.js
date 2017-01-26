@@ -53,6 +53,9 @@ var map_constants = {
     maxZoom: 15,
   },
 
+  'default_dep_time' : formatTime(8, 0),
+  'default_dep_time_js' : 8,
+
 };
 
 // styles for the bubbles

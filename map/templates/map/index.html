@@ -27,7 +27,7 @@
         <label for="deptime_select">Departure at: </label>
         <select class="form-control" id="deptime_select">
           {% for i in "x"|ljust:"24" %}
-            <option {% if forloop.counter0 == 8 %} selected="selected" {% endif %}>{{ forloop.counter0 }}</option>
+            <option>{{ forloop.counter0 }}</option>
           {% endfor %}
         </select>
       </div>
