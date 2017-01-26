@@ -26,12 +26,12 @@ $(document).ready(function() {
     var active_stop = null;
     var id_to_reachable_stops = {};
 
-    //path
-    var flightPath = new google.maps.Polyline(lines);
-
     // map object
     var map = new google.maps.Map(document.getElementById("map-canvas"), map_constants.options);
     map.set('styles', map_constants.styles);
+
+    // shortest path from active stop to hovered stop
+    var flightPath = new google.maps.Polyline(lines);
 
     // zoom level of the map
     var zoom = map_constants.options.zoom;
@@ -178,7 +178,6 @@ $(document).ready(function() {
         // when the user finishes hovering, we delete the path
         s.bubble.addListener('mouseout', function() {
           flightPath.setMap(null);
-          flightPath = null;
         })
       });
       
