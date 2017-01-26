@@ -174,13 +174,6 @@ function formatTime(hours, minutes) {
   return sHours + sMinutes;
 }
 
-function getInfoWindowsContent(name, arrival_time) {
-  var content = 
-      '<p><b>' + name + '</b></p>'+
-      '<p>Arrival time :' + arrival_time + '</p>';
-  return content;
-}
-
 /**
 * Returns:
 *   the time it is now, according to the specification for #formatTime(hours, minutes)

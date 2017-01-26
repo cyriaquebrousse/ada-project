@@ -29,11 +29,6 @@ $(document).ready(function() {
     //path
     var flightPath = new google.maps.Polyline(lines);
 
-    //InfoWindow
-    var infowindow = new google.maps.InfoWindow({
-      maxWidth: 100
-    });
-
     // map object
     var map = new google.maps.Map(document.getElementById("map-canvas"), map_constants.options);
     map.set('styles', map_constants.styles);
@@ -194,20 +189,11 @@ $(document).ready(function() {
         s.bubble.addListener('mouseout', function() {
           flightPath.setMap(null);
           if(s.id in id_to_reachable_stops) {
-            //infowindow.close();
             setStopsInfo(active_stop.name);
           }
         })
       });
       
-    }
-
-    function openInfoWindos(s, time_arrival) {
-      var content = getInfoWindowsContent(s.name, time_arrival);
-
-      infowindow.setContent(content)
-      infowindow.setPosition(s.bubble.getCenter());
-      infowindow.open(map, s.bubble);
     }
 
     function draw_path(edge) {
