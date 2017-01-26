@@ -51,6 +51,7 @@ var map_constants = {
     zoom: 8,
     minZoom: 8,
     maxZoom: 15,
+    streetViewControl: false,
   },
 
   'default_dep_time' : formatTime(8, 0),
@@ -64,7 +65,7 @@ var bubbles = {
   default_stroke_opacity: 0.8,
   default_stroke_weight: 0.5,
   default_fill_color: 'gray',
-  default_fill_opacity: 0.3,
+  default_fill_opacity: 0.5,
   default_radius: 2000,
 
   active_stroke_color: 'black',
@@ -72,11 +73,11 @@ var bubbles = {
   active_stroke_weight: 0.5,
   active_fill_color: 'black',
   active_fill_opacity: 1,
-  active_radius: 4000,
+  active_radius: 5000,
 
   reachable_stroke_opacity: 0.8,
   reachable_stroke_weight: 0.5,
-  reachable_fill_opacity: 0.5,
+  reachable_fill_opacity: 0.7,
   reachable_radius: 2000,
 }
 
@@ -274,4 +275,13 @@ function bubble_set_path(bubble) {
     fillOpacity: bubbles.active_fill_opacity,
     radius: bubble_radius_for_zoom(bubbles.reachable_radius, zoom) * 2,
   });
+}
+
+function change_tips_text(text) {
+  document.getElementById('tips_box').style.display = 'block';
+  document.getElementById('tips_text').innerHTML = text;
+}
+
+function change_tips_visible(visible) {
+  document.getElementById('tips_box').style.display = visible ? 'block' : 'none';
 }

@@ -49,11 +49,21 @@ body{
     overflow-y:scroll;
 }
 
+#right {
+    height:calc(100% - 0);
+    position: absolute;
+    right:0;
+    top:50px;
+    bottom:0;
+    overflow-y:scroll;
+    background-color: #fff;
+}
+
 #map-canvas {
-	width:100%;
+    width:75%;
     height:calc(100% - 0);
     position:absolute;
-    right:16px;
+    left:0;
     top:50px;
     bottom:0;
     overflow:hidden;

@@ -85,6 +85,9 @@ $(document).ready(function() {
       // first get the closest stop ID
       new JsonClient(CLOSEST_STOP_URL).get(latLng.lat() + ',' + latLng.lng(), function(response) {
         activateStop(stop_id_to_stops[response.closest_stop.id]);
+        change_tips_text('You can now hover on stations to show the shortest path, or click on another stop.');
+        document.getElementById('visible_on_active_stop').style.display = 'block';
+        document.getElementById('active_stop_text').innerHTML = active_stop.name;
 
         // then query for the isochrone network
         fireIsochroneQuery();
@@ -159,18 +162,23 @@ $(document).ready(function() {
         s['active'] = false;        
         s['bubble'] = new google.maps.Circle({
           center: new google.maps.LatLng(s.lat, s.lng),
+          clickable: false,
           map: map,
-        });;
+        });
         bubble_set_default(s.bubble, zoom);
 
+        // add listener for hovering. we then need to draw the shortest path from the active stop
         s.bubble.addListener('mouseover', function(){
           if(s.id in id_to_reachable_stops) {
             var l = s.bubble.center;
             draw_path(id_to_reachable_stops[s.id])
           }
         });
+
+        // when the user finishes hovering, we delete the path
         s.bubble.addListener('mouseout', function() {
           flightPath.setMap(null);
+          flightPath = null;
         })
       });
       
@@ -216,7 +224,6 @@ $(document).ready(function() {
 
       // paint every reachable stop from the active one
       reachable_stops.forEach(function(rs) {
-        // TODO
         if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
           s = stop_id_to_stops[rs.stop_id];
           var color = getGradientColor(rs.time_arrival);
@@ -241,7 +248,6 @@ $(document).ready(function() {
       active_stop = stop;
       active_stop.active = true;
       bubble_set_active(active_stop.bubble, zoom);
-      console.log('> activated stop: ' + active_stop.name);
     }
   }
 

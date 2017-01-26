@@ -34,14 +34,68 @@
     </form>
 
   </div>
+
 </div>
 
 <div id="map-canvas"></div>
 <div class="container-fluid" id="main">
+  <!-- MAIN BODY-->
   <div class="row">
-  	<div class="col-lg-8 col-lg-offset-2"><!--map-canvas will be postioned here--></div>
-    
+    <!-- MAP CENTRAL PANEL -->
+    <div class="col-sm-9 col-sm-offset-2"><!--map-canvas will be postioned here--></div>
+
+    <!-- RIGHT PANEL FOR STATISTICS-->
+    <div class="col-sm-3" id="right">
+      <h2>Statistics</h2>
+
+      <div class="panel panel-info" id="tips_box">
+        <div class="panel-heading">Tips</div>
+        <div class="panel-body" id="tips_text">Click anywhere on the map to begin.</div>
+      </div>
+
+      <div id="visible_on_active_stop" style="display:none;">
+        <div class="panel panel-default" id="active_stop_container">
+          <div class="panel-heading">Active stop</div>
+          <div class="panel-body" id="active_stop_text"></div>
+        </div>
+
+        <div class="panel panel-default" id="legend_container">
+          <div class="panel-heading">Legend</div>
+          <div class="panel-body" id="legend">(Legend for map at this zoom level)</div>
+        </div>
+
+        <div class="panel panel-default" id="general_stats_container">
+          <div class="panel-heading">Global time distance from this stop</div>
+          <div class="panel-body">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>Mean</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>Standard deviation</td>
+                  <td>0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <p>
+      <a href="http://bootply.com" target="_ext" class="center-block btn btn-primary">More Bootstrap Snippets on Bootply</a>
+      </p>
+
+      <hr>
+
+    </div>
+    <!-- END STATS PANEL-->
+
   </div>
+  <!-- END BODY PANEL -->
+
 </div>
 <!-- end template -->
 
