@@ -10,23 +10,23 @@ var map_constants = {
     },
     {
       "featureType": "poi",
-      "stylers": [{"saturation": -100}, {"lightness": 51}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"lightness": 51}, {"visibility": "off"}]
     },
     {
       "featureType": "road.highway",
-      "stylers": [{"saturation": -100}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"visibility": "off"}]
     },
     {
       "featureType": "road.arterial",
-      "stylers": [{"saturation": -100}, {"lightness": 30}, {"visibility": "on"}]
+      "stylers": [{"saturation": -100}, {"lightness": 30}, {"visibility": "off"}]
     },
     {
       "featureType": "road.local",
-      "stylers": [{"saturation": -100}, {"lightness": 40}, {"visibility": "on"}]
+      "stylers": [{"saturation": -100}, {"lightness": 40}, {"visibility": "off"}]
     },
     {
       "featureType": "transit",
-      "stylers": [{"saturation": -100}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"visibility": "off"}]
     },
     {
       "featureType": "administrative.province",
@@ -58,6 +58,9 @@ var map_constants = {
   'default_dep_time_js' : 8,
 
 };
+
+var ACTIVE_STOP_HEADER = 'Active Stop'
+var SHORTEST_PATH_HEADER = 'Shortest Path'
 
 // styles for the bubbles
 var bubbles = {
@@ -169,6 +172,13 @@ function formatTime(hours, minutes) {
   var sMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
 
   return sHours + sMinutes;
+}
+
+function getInfoWindowsContent(name, arrival_time) {
+  var content = 
+      '<p><b>' + name + '</b></p>'+
+      '<p>Arrival time :' + arrival_time + '</p>';
+  return content;
 }
 
 /**
@@ -285,3 +295,15 @@ function change_tips_text(text) {
 function change_tips_visible(visible) {
   document.getElementById('tips_box').style.display = visible ? 'block' : 'none';
 }
+
+function setStopsInfo(stop) {
+  document.getElementById('active_stop_header').innerHTML = ACTIVE_STOP_HEADER;
+  document.getElementById('active_stop_text').innerHTML = stop;
+}
+
+function setPathInfo(from, to, time) {
+  document.getElementById('active_stop_header').innerHTML = SHORTEST_PATH_HEADER;
+  var text = from + " <b>&#x27f6</b> " + to + "<br>" + time + " sec";
+  document.getElementById('active_stop_text').innerHTML = text;
+}
+

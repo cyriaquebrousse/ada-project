@@ -26,6 +26,14 @@ $(document).ready(function() {
     var active_stop = null;
     var id_to_reachable_stops = {};
 
+    //path
+    var flightPath = new google.maps.Polyline(lines);
+
+    //InfoWindow
+    var infowindow = new google.maps.InfoWindow({
+      maxWidth: 100
+    });
+
     // map object
     var map = new google.maps.Map(document.getElementById("map-canvas"), map_constants.options);
     map.set('styles', map_constants.styles);
@@ -87,7 +95,8 @@ $(document).ready(function() {
         activateStop(stop_id_to_stops[response.closest_stop.id]);
         change_tips_text('You can now hover on stations to show the shortest path, or click on another stop.');
         document.getElementById('visible_on_active_stop').style.display = 'block';
-        document.getElementById('active_stop_text').innerHTML = active_stop.name;
+
+        setStopsInfo(active_stop.name);
 
         // then query for the isochrone network
         fireIsochroneQuery();
@@ -171,16 +180,34 @@ $(document).ready(function() {
         s.bubble.addListener('mouseover', function(){
           if(s.id in id_to_reachable_stops) {
             var l = s.bubble.center;
-            draw_path(id_to_reachable_stops[s.id])
+
+            var edge = id_to_reachable_stops[s.id];
+            var time_arrival = edge.time_arrival;
+
+            //openInfoWindos(s, time_arrival);
+            setPathInfo(active_stop.name, s.name, time_arrival);
+            draw_path(edge);
           }
         });
 
         // when the user finishes hovering, we delete the path
         s.bubble.addListener('mouseout', function() {
           flightPath.setMap(null);
+          if(s.id in id_to_reachable_stops) {
+            //infowindow.close();
+            setStopsInfo(active_stop.name);
+          }
         })
       });
       
+    }
+
+    function openInfoWindos(s, time_arrival) {
+      var content = getInfoWindowsContent(s.name, time_arrival);
+
+      infowindow.setContent(content)
+      infowindow.setPosition(s.bubble.getCenter());
+      infowindow.open(map, s.bubble);
     }
 
     function draw_path(edge) {
