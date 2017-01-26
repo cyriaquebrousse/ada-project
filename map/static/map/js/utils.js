@@ -10,23 +10,23 @@ var map_constants = {
     },
     {
       "featureType": "poi",
-      "stylers": [{"saturation": -100}, {"lightness": 51}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"lightness": 51}, {"visibility": "off"}]
     },
     {
       "featureType": "road.highway",
-      "stylers": [{"saturation": -100}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"visibility": "off"}]
     },
     {
       "featureType": "road.arterial",
-      "stylers": [{"saturation": -100}, {"lightness": 30}, {"visibility": "on"}]
+      "stylers": [{"saturation": -100}, {"lightness": 30}, {"visibility": "off"}]
     },
     {
       "featureType": "road.local",
-      "stylers": [{"saturation": -100}, {"lightness": 40}, {"visibility": "on"}]
+      "stylers": [{"saturation": -100}, {"lightness": 40}, {"visibility": "off"}]
     },
     {
       "featureType": "transit",
-      "stylers": [{"saturation": -100}, {"visibility": "simplified"}]
+      "stylers": [{"saturation": -100}, {"visibility": "off"}]
     },
     {
       "featureType": "administrative.province",
