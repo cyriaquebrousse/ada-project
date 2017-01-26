@@ -162,7 +162,7 @@ $(document).ready(function() {
         s['active'] = false;        
         s['bubble'] = new google.maps.Circle({
           center: new google.maps.LatLng(s.lat, s.lng),
-          clickable: false,
+          //clickable: false,
           map: map,
         });
         bubble_set_default(s.bubble, zoom);
