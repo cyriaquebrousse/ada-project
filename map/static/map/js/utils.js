@@ -88,7 +88,8 @@ var lines = {
   geodesic: true,
   strokeColor: 'black',
   strokeOpacity: 1.0,
-  strokeWeight: 2,
+  strokeWeight: 3,
+  zIndex: 1,
 }
 
 var red_mix_color = {
