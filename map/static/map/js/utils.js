@@ -295,16 +295,16 @@ function setStopsInfo(stop) {
   document.getElementById('active_stop_text').innerHTML = stop;
 }
 
-function format(time) {
-  var h = Math.round(time/3600);
-  var m = Math.round( (time % 3600) / 60 );
-  var s = Math.round( time % 60 );
-  return Math.round(h + "h " +  m + 'm ' + s + 's');
+function format(seconds) {
+  var h = Math.floor(seconds/3600);
+  var m = Math.floor( (seconds % 3600) / 60 );
+  var s =  seconds % 60 ;
+  return h + "h " +  m + "m " + s + 's';
 }
 
-function setPathInfo(from, to, time) {
+function setPathInfo(from, to, seconds) {
   document.getElementById('active_stop_header').innerHTML = SHORTEST_PATH_HEADER;
-  var text = from + " <b>&#x27f6</b> " + to + "<br>" + format(time);
+  var text = from + " <b>&#x27f6</b> " + to + "<br>" + format(seconds);
   document.getElementById('active_stop_text').innerHTML = text;
 }
 
