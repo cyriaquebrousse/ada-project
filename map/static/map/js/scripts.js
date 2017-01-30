@@ -1,5 +1,8 @@
 $(document).ready(function() {
-  $('utils.js', function() {
+  $.when(
+    $('utils.js'), 
+    $('stop_weights.js')
+  ).done( function() {
     //wait for loading of included script and execute init
     google.maps.event.addDomListener(window, 'load', initialize);
   });
@@ -22,9 +25,12 @@ $(document).ready(function() {
 
     // all stops, with their bubble
     var stops = {};
-    var stop_id_to_stops = {}
+    var stop_id_to_stops = {};
     var active_stop = null;
     var id_to_reachable_stops = {};
+
+    var visible_stops = {};
+    var nb_stops = 200;
 
     //path
     var flightPath = new google.maps.Polyline(lines);
@@ -42,6 +48,7 @@ $(document).ready(function() {
     // departure time
     var dep_time = map_constants.default_dep_time;
 
+
     /* **************************************
                     INIT TASKS
     **************************************** */
@@ -53,6 +60,16 @@ $(document).ready(function() {
     // register change listener on dep_time selector
     document.getElementById('deptime_select').addEventListener('change', onDepTimeChanged);
     document.getElementById('deptime_select').value = map_constants.default_dep_time_js;
+    
+    var stop_slider = document.getElementById('slider');
+    stop_slider.oninput = function() {
+      document.getElementById('value').innerHTML = stop_slider.value;
+    };
+    stop_slider.onchange = function() {
+      nb_stops = document.getElementById('value').innerHTML = stop_slider.value;
+      visible_stops = getVisitbleStops(nb_stops);
+      updateStopsVisibility();
+    }
 
      /* **************************************
                     FUNCTIONS
@@ -70,6 +87,7 @@ $(document).ready(function() {
       client.get('', function(response) {
         stops = response.stops;
         resolveStops(stops);
+        visible_stops = getVisitbleStops(nb_stops);
         createBubbles();
       });
 
@@ -108,6 +126,7 @@ $(document).ready(function() {
       // scale the radius for each bubble
       stops.forEach(function(s) {
         s.bubble.setRadius(bubble_radius_for_new_zoom(s.bubble.getRadius(), old_zoom, zoom));
+        setVisibility(s);
       });
     }
 
@@ -174,12 +193,9 @@ $(document).ready(function() {
         // add listener for hovering. we then need to draw the shortest path from the active stop
         s.bubble.addListener('mouseover', function(){
           if(s.id in id_to_reachable_stops) {
-            var l = s.bubble.center;
-
             var edge = id_to_reachable_stops[s.id];
             var time_arrival = edge.time_arrival;
 
-            //openInfoWindos(s, time_arrival);
             setPathInfo(active_stop.name, s.name, time_arrival);
             draw_path(edge);
           }
@@ -196,6 +212,9 @@ $(document).ready(function() {
       
     }
 
+    /**
+    * Draw the lines of a path from a given stop edge til the current activate stop
+    */
     function draw_path(edge) {
       path_coordinates = [];
       var current_edge = edge;
@@ -231,6 +250,7 @@ $(document).ready(function() {
         // reset every stop except the active one
         if (s.id != active_stop.id) {
           bubble_set_default(s.bubble, zoom);
+          setVisibility(s);
         }
       });
 
@@ -246,6 +266,29 @@ $(document).ready(function() {
     }
 
     /**
+    * Set the visibility for a given stop
+    */
+    function setVisibility(stop) {
+      if(stop.id != active_stop.id || active_stop.active == false) {
+        var visible = Boolean(stop.id in visible_stops);
+        stop.bubble.setVisible(visible);
+      } else {
+        stop.bubble.setVisible(true);
+      }
+    }
+
+    /**
+    * Update visibility for all stops
+    */
+    function updateStopsVisibility() {
+      stops.forEach( function(s) {
+        var visible = Boolean(s.id in visible_stops);
+        s.bubble.setVisible(visible);
+      });
+      active_stop.bubble.setVisible(true);
+    }
+
+    /**
     * Activates (highlights and set active_stop pointer) the given Stop object.
     *
     * Parameters:
@@ -254,11 +297,13 @@ $(document).ready(function() {
     function activateStop(stop) {
       if (active_stop != null) {
         active_stop.active = false;
+        setVisibility(active_stop);
         bubble_set_default(active_stop.bubble, zoom);
       }
 
       active_stop = stop;
       active_stop.active = true;
+      active_stop.bubble.setVisible(true);
       bubble_set_active(active_stop.bubble, zoom);
     }
   }

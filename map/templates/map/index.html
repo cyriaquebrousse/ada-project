@@ -64,6 +64,14 @@
           <div class="panel-body" id="legend">(Legend for map at this zoom level)</div>
         </div>
 
+        <div class="panel panel-default" id="slider_container">
+          <div class="panel-heading">Number of Stops</div>
+          <div class="panel-body">
+            <input id = "slider" type="range" min="0" max="1801" value="200"/>
+            <output id="value">200</output>
+          </div>
+        </div>
+
         <div class="panel panel-default" id="general_stats_container">
           <div class="panel-heading">Global time distance from this stop</div>
           <div class="panel-body">
@@ -107,6 +115,7 @@
 
 <script src="{% static 'map/js/scripts.js' %}"></script>
 <script src="{% static 'map/js/utils.js' %}"></script>
+<script src="{% static 'map/js/stop_weights.js' %}"></script>
 
 </body>
 </html>
