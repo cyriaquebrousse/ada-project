@@ -254,11 +254,18 @@ $(document).ready(function() {
         }
       });
 
+      // Setup color scale
+      var data = reachable_stops.map(rs => rs.time_arrival);
+      data.sort();
+      var limits = chroma.limits(data, 'q', 20);
+      var color_scale = chroma.scale(['green', 'yellow', 'orange', 'red', 'red']).mode('lab').domain(limits, 20, 'quantiles');
+
       // paint every reachable stop from the active one
       reachable_stops.forEach(function(rs) {
         if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
           s = stop_id_to_stops[rs.stop_id];
-          var color = getGradientColor(rs.time_arrival);
+	  var color = color_scale(rs.time_arrival);
+          //var color = getGradientColor(rs.time_arrival);
           //var color = getColor(rs.time_arrival);
           bubble_set_reachable(s.bubble, color, color, zoom);
         }

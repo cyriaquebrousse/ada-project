@@ -78,9 +78,9 @@ var bubbles = {
   active_fill_opacity: 1,
   active_radius: 5000,
 
-  reachable_stroke_opacity: 0.8,
+  reachable_stroke_opacity: 1,
   reachable_stroke_weight: 0.5,
-  reachable_fill_opacity: 0.7,
+  reachable_fill_opacity: 0.8,
   reachable_radius: 2000,
 }
 

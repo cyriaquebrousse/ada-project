@@ -78,12 +78,12 @@
             <table class="table">
               <tbody>
                 <tr>
-                  <td>Mean</td>
-                  <td>0</td>
+                  <td>Median</td>
+                  <td id="stat-median">0</td>
                 </tr>
                 <tr>
                   <td>Standard deviation</td>
-                  <td>0</td>
+                  <td id="stat-std">0</td>
                 </tr>
               </tbody>
             </table>
@@ -113,6 +113,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPNy-zRV6v_zQx6B8CC-qPdWCCg5Y8kXs"></script>
 
+<script src="{% static 'map/js/chroma.min.js' %}"></script>
 <script src="{% static 'map/js/scripts.js' %}"></script>
 <script src="{% static 'map/js/utils.js' %}"></script>
 <script src="{% static 'map/js/stop_weights.js' %}"></script>
