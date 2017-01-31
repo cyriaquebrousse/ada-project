@@ -270,6 +270,11 @@ $(document).ready(function() {
       var limits = chroma.limits(data, 'q', 20);
       var color_scale = chroma.scale(['green', 'yellow', 'orange', 'red', 'red']).mode('lab').domain(limits, 20, 'quantiles');
 
+      // Compute statistics
+      var median = data[ ~~(data.length / 2) ];
+      $("#stat-median").text(format(median));
+      $("#stat-std").text(format(~~standardDeviation(data)));
+
       // paint every reachable stop from the active one
       reachable_stops.forEach(function(rs) {
         if (rs.stop_id in stop_id_to_stops && rs.stop_id != active_stop.id) {
