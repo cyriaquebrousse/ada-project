@@ -68,3 +68,9 @@ body{
     bottom:0;
     overflow:hidden;
 }
+
+.legend-colorbox {
+    width:96px;
+    height:16px;
+    opacity:0.6;
+}

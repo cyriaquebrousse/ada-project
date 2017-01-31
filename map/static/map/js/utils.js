@@ -35,7 +35,7 @@ var map_constants = {
     {
       "featureType": "water",
       "elementType": "labels",
-      "stylers": [{"visibility": "on"}, {"lightness": -25}, {"saturation": -100}]
+      "stylers": [{"visibility": "off"}, {"lightness": -25}, {"saturation": -100}]
     },
     {
       "featureType": "water",
@@ -298,8 +298,9 @@ function setStopsInfo(stop) {
 function format(seconds) {
   var h = Math.floor(seconds/3600);
   var m = Math.floor( (seconds % 3600) / 60 );
-  var s =  seconds % 60 ;
-  return h + "h " +  m + "m " + s + 's';
+  var s = seconds % 60;
+  var ret = h + "h " +  m + "m ";
+  return s == 0 ? ret : ret + s + "s";
 }
 
 function setPathInfo(from, to, seconds) {
