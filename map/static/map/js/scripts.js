@@ -30,7 +30,8 @@ $(document).ready(function() {
     var id_to_reachable_stops = {};
 
     var visible_stops = {};
-    var nb_stops = 200;
+    var nb_stops = 1801;
+    var data_loaded = false;
 
     //path
     var flightPath = new google.maps.Polyline(lines);
@@ -48,6 +49,8 @@ $(document).ready(function() {
     // departure time
     var dep_time = map_constants.default_dep_time;
 
+    var bounds = google.maps.LatLngBounds();
+
 
     /* **************************************
                     INIT TASKS
@@ -56,6 +59,7 @@ $(document).ready(function() {
     google.maps.event.addListener(map, 'tilesloaded', onMapLoaded);
     google.maps.event.addListener(map, 'click', onMapClick);
     google.maps.event.addListener(map, 'zoom_changed', onZoomChanged);
+    google.maps.event.addListener(map, 'bounds_changed', setMapBounds);
 
     // register change listener on dep_time selector
     document.getElementById('deptime_select').addEventListener('change', onDepTimeChanged);
@@ -67,7 +71,6 @@ $(document).ready(function() {
     };
     stop_slider.onchange = function() {
       nb_stops = document.getElementById('value').innerHTML = stop_slider.value;
-      visible_stops = getVisitbleStops(nb_stops);
       updateStopsVisibility();
     }
 
@@ -87,11 +90,19 @@ $(document).ready(function() {
       client.get('', function(response) {
         stops = response.stops;
         resolveStops(stops);
-        visible_stops = getVisitbleStops(nb_stops);
         createBubbles();
+        data_loaded = true;
+        setMapBounds();
       });
 
       MAP_LOADED_ONCE = true;
+    }
+
+    function setMapBounds() {
+      if(data_loaded) {
+        bounds = map.getBounds();
+        updateStopsVisibility();
+      }
     }
 
     /**
@@ -126,7 +137,6 @@ $(document).ready(function() {
       // scale the radius for each bubble
       stops.forEach(function(s) {
         s.bubble.setRadius(bubble_radius_for_new_zoom(s.bubble.getRadius(), old_zoom, zoom));
-        setVisibility(s);
       });
     }
 
@@ -288,11 +298,15 @@ $(document).ready(function() {
     * Update visibility for all stops
     */
     function updateStopsVisibility() {
+      visible_stops = getVisitbleStops();
+      //console.log(Object.keys(visible_stops).length);
       stops.forEach( function(s) {
         var visible = Boolean(s.id in visible_stops);
         s.bubble.setVisible(visible);
       });
-      active_stop.bubble.setVisible(true);
+      if(active_stop != null) {
+        active_stop.bubble.setVisible(true);
+      }
     }
 
     /**
@@ -312,6 +326,26 @@ $(document).ready(function() {
       active_stop.active = true;
       active_stop.bubble.setVisible(true);
       bubble_set_active(active_stop.bubble, zoom);
+    }
+
+    /**
+    * Set of stops that are visible in the current level of zoom and are bounded by the selected maximum number of stops
+    */
+    function getVisitbleStops() {
+      visible_stops = {};
+      var count = 0;
+      var i;
+      for(i = 0; count < nb_stops && i < stop_weigthed_order.length; i++) {
+        var stop_id = stop_weigthed_order[i][0];
+        var stop = stop_id_to_stops[stop_id];
+        var stop_latlng = new google.maps.LatLng(stop.lat, stop.lng);
+        
+        if(bounds.contains(stop_latlng)) {
+          visible_stops[stop_id] = stop_weigthed_order[i][1];
+          count++;
+        }
+      }
+      return visible_stops;
     }
   }
 
