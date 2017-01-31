@@ -1,7 +1,13 @@
 # Applied Data Analysis Project
 
 Calculate time-to-destination using the Swiss pubic transport network, from any starting point
-stop to the whole rest of the country; and display the result in a meaningful way (isochone maps).
+stop to the whole rest of the country; and display the result in a meaningful way (isochrone maps).
+
+## Project presentation
+The slides that were used on the board are found [here](Presentation 31.01.pdf).
+
+## Code organization
+All the Python code is found in [map/](./map/). The javascript code is in the `static` sub-directory.
 
 ## Data Description
 The feeds are based on the official Swiss schedule that is being published in the HAFAS format.
@@ -22,10 +28,10 @@ using the Swiss public transport network.
  - Explore, analyse and process the Swiss public transport network data from [GTFS-CH](http://gtfs.geops.ch/).
  - Build a graph with a bearable memory footprint (to be stored in memory).
  - Handle minimum shortest paths queries in a computational efficient way.
- - Visualize the results using a custom visualization tool (isochone maps).
+ - Visualize the results using a custom visualization tool (isochrone maps).
 
 
 ## Getting started
 First, install Django with `pip install django`. Make sure your PATH is in order.<br>
 Place yourself in the root of the repository, and execute `python manage.py runserver`.<br>
-You can then access [http://localhost:8000](http://localhost:8000).
+You can then access [http://localhost:8000/isochrone/home](http://localhost:8000/isochrone/home).
