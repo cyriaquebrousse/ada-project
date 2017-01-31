@@ -60,14 +60,31 @@
         </div>
 
         <div class="panel panel-default" id="legend_container">
-          <div class="panel-heading">Legend</div>
-          <div class="panel-body" id="legend">(Legend for map at this zoom level)</div>
+          <div class="panel-heading">Legend (Top percentile)</div>
+          <div class="panel-body" id="legend">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td style="background-color:green;" class="legend-colorbox"></td>
+                  <td style="background-color:yellow;" class="legend-colorbox"></td>
+                  <td style="background-color:orange;" class="legend-colorbox"></td>
+                  <td style="background-color:red;" class="legend-colorbox"></td>
+                </tr>
+                <tr>
+                  <td style="text-align:center;">0% - 20%</td>
+                  <td style="text-align:center;">20% - 40%</td>
+                  <td style="text-align:center;">40% - 60%</td>
+                  <td style="text-align:center;">60% - 100%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="panel panel-default" id="slider_container">
-          <div class="panel-heading">Number of Stops</div>
+          <div class="panel-heading">Number of Stops (N = 1801)</div>
           <div class="panel-body">
-            <input id = "slider" type="range" min="0" max="1801" value="1801"/>
+            <input id="slider" type="range" min="0" max="1801" value="1801"/>
             <output id="value">1801</output>
           </div>
         </div>
